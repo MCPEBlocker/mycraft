@@ -10,6 +10,7 @@ const logger = winston.createLogger({
         new winston.transports.File({filename:'./logs/index.log'})
     ]
 });
+const authRoute = require('./routes/auth');
 
 mongoose.connect(process.env.mongodbURI,{
     useNewUrlParser:true,
@@ -17,7 +18,9 @@ mongoose.connect(process.env.mongodbURI,{
     useUnifiedTopology:true
 },(err)=>{
     if(err)
-        return logger.error(`Can't connect to mongodb cloud!`);
+    return logger.error(`Can't connect to mongodb cloud!`);
 });
-logger.defaultMeta
+
+app.use('/api/auth',authRoute);
+
 app.listen(port,()=> logger.info(`Listening at port ${port}!`));

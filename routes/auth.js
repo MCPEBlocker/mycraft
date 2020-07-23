@@ -18,19 +18,19 @@ router.post('/',(req,res)=>{
         };
         const { error } = validateUser(new_user);
         if(error)
-            return res.status(400).send(error.details[0].message);
+            return res.status(500).send(error.details[0].message);
         bcrypt.genSalt((err,salt) => {
             if(err)
-                return res.status(400).send(err.message);
+                return res.status(500).send(err.message);
             bcrypt.hash(req.body.password,salt,(err,password) => {
                 if(err)
-                    return res.status(400).send(err.message);
+                    return res.status(500).send(err.message);
                 new_user.password = password;
                 const user = new User(new_user);
                 user.save((err,product) => {
-                if(err)
-                return res.status(400).send(err.message);
-                res.status(201).send(product);
+                    if(err)
+                        return res.status(400).send(err.message);
+                    res.status(201).send(product);
                 });
             });
         });
