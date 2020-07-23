@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "mycraft-master",
   "version": "1.0.0",
   "description": "Simple app! :)",
@@ -15,4 +16,26 @@
   "keywords": [],
   "author": "",
   "license": "ISC"
+=======
+  "name": "mycraft",
+  "version": "1.0.0",
+  "description": "Simple social app! :)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MCPEBlocker/mycraft.git"
+  },
+  "author": "AzizbekTheDev and MCPEBlocker",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MCPEBlocker/mycraft/issues"
+  },
+  "homepage": "https://github.com/MCPEBlocker/mycraft#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+>>>>>>> c1d0f46437182b3aab72d0abbd9d2509dc43fd36
 }
