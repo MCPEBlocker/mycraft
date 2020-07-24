@@ -19,11 +19,17 @@
   },
   "homepage": "https://github.com/MCPEBlocker/mycraft#readme",
   "dependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/express": "^4.17.7",
+    "@types/joi": "^14.3.4",
+    "@types/mongoose": "^5.7.32",
+    "@types/node": "^14.0.25",
     "bcrypt": "^5.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "joi": "^17.1.1",
     "mongoose": "^5.9.25",
+    "typescript": "^3.9.7",
     "winston": "^3.3.3"
   }
 }

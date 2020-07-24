@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const Joi = require('joi');
+import mongoose = require('mongoose');
+import Joi = require('joi');
 
-const userSchema = new mongoose.Schema({
-    username: {
+export const User = mongoose.model('User',new mongoose.Schema({
+    username : {
         unique: true,
         type: String,
         required: true,
@@ -22,11 +22,9 @@ const userSchema = new mongoose.Schema({
     },
     followers: [mongoose.SchemaTypes.ObjectId],
     followings: [mongoose.SchemaTypes.ObjectId]
-});
+}));
 
-const User = mongoose.model('User',userSchema);
-
-function validateUser(user) {
+export const validateUser: Function = (user: any) => {
     const schema = Joi.object({
         email: Joi.string().required(),
         username: Joi.string().required().min(5).max(50),
@@ -36,6 +34,3 @@ function validateUser(user) {
     });
     return schema.validate(user);
 };
-
-exports.User = User;
-exports.validateUser = validateUser;
