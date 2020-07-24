@@ -1,0 +1,4 @@
+{
+    "port": 8080,
+    "mongodbURI": "mongodb+srv://mcpeblocker:Minecraft11004@mycraftapp.re0pi.mongodb.net/main?retryWrites=true&w=majority"
+}

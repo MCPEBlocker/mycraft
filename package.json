@@ -2,7 +2,7 @@
   "name": "mycraft",
   "version": "1.0.0",
   "description": "Simple social app! :)",
-  "main": "index.js",
+  "main": "./server/server.js",
   "scripts": {
     "start": "node .",
     "devStart": "nodemon .",
@@ -13,7 +13,7 @@
     "url": "git+https://github.com/MCPEBlocker/mycraft.git"
   },
   "author": "AzizbekTheDev and MCPEBlocker",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/MCPEBlocker/mycraft/issues"
   },
