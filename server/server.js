@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+require('dotenv').config();
 const express = require("express");
 const app = express();
 const config = require("./config.json");
@@ -14,7 +15,7 @@ const logger = winston.createLogger({
 
 const authRoute = require('./routes/auth');
 
-mongoose.connect(config.mongodbURI,{
+mongoose.connect(process.env.mongodbURI,{
     useNewUrlParser:true,
     useFindAndModify:true,
     useUnifiedTopology:true,
