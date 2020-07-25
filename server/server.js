@@ -1,36 +1,35 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 require('dotenv').config();
-const express = require("express");
-const app = express();
-const config = require("./config.json");
-const mongoose = require('mongoose');
-const winston = require('winston');
-const logger = winston.createLogger({
+var express = require("express");
+var app = express();
+var config = require("./config.json");
+var mongoose = require("mongoose");
+var winston = require("winston");
+var auth_1 = __importDefault(require("./routes/auth"));
+var logger = winston.createLogger({
     transports: [
         new winston.transports.Console(),
-        new winston.transports.File({filename:'./logs/index.log'})
+        new winston.transports.File({ filename: './logs/index.log' })
     ]
 });
-
-const authRoute = require('./routes/auth');
-
-mongoose.connect(process.env.mongodbURI,{
-    useNewUrlParser:true,
-    useFindAndModify:true,
-    useUnifiedTopology:true,
-    useCreateIndex:true
-},(err)=>{
-    if(err)
-    return logger.error(`Can't connect to mongodb cloud!`);
+var mongodbURI = process.env.mongodbURI;
+mongoose.connect(mongodbURI, {
+    useCreateIndex: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true,
+    useNewUrlParser: true
+}, function (err) {
+    if (err)
+        return logger.error('Cannot connect to the mongodb cloud!');
 });
-
-app.use('/api/auth',authRoute);
-
+app.use('/api/auth', auth_1.default);
 app.get("/", function (req, res) {
     res.send("/ main page");
 });
-
 app.listen(config.port, function () {
-    console.log("Up and running on https://localhost:" + config.port);
+    logger.info("Up and running on https://localhost:" + config.port);
 });

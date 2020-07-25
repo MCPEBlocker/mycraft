@@ -16,7 +16,7 @@ const mongodbURI: any = process.env.mongodbURI;
 
 mongoose.connect(mongodbURI,{
     useCreateIndex:true,
-    useFindAndModify:true,
+    useFindAndModify:false,
     useUnifiedTopology:true,
     useNewUrlParser:true
 },(err:any) => {
@@ -27,9 +27,9 @@ mongoose.connect(mongodbURI,{
 app.use('/api/auth',authRoute);
 
 app.get("/", (req: any, res: any) => {
-    res.send("/ main page");4
+    res.send("/ main page");
 })
 
 app.listen(config.port, () => {
-    console.log(`Up and running on https://localhost:${config.port}`)
+    logger.info(`Up and running on https://localhost:${config.port}`);
 })

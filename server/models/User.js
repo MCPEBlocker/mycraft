@@ -1,8 +1,10 @@
-import mongoose = require('mongoose');
-import Joi = require('joi');
-
-export const User = mongoose.model('User',new mongoose.Schema({
-    username : {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateUser = exports.User = void 0;
+var mongoose = require("mongoose");
+var Joi = require("joi");
+exports.User = mongoose.model('User', new mongoose.Schema({
+    username: {
         unique: true,
         type: String,
         required: true,
@@ -10,7 +12,7 @@ export const User = mongoose.model('User',new mongoose.Schema({
         max: 50
     },
     email: {
-        unique:true,
+        unique: true,
         type: String,
         required: true
     },
@@ -33,9 +35,8 @@ export const User = mongoose.model('User',new mongoose.Schema({
         default: false
     }
 }));
-
-export const validateUser: Function = (user: any) => {
-    const schema = Joi.object({
+exports.validateUser = function (user) {
+    var schema = Joi.object({
         email: Joi.string().required(),
         username: Joi.string().required().min(5).max(50),
         password: Joi.string().required().min(8).max(16),
