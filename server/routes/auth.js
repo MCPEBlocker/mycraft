@@ -56,8 +56,8 @@ router.post('/', function (req, res) {
                 email: req.body.email,
                 username: req.body.username,
                 password: req.body.password,
-                followers: [],
-                followings: [],
+                followers: req.body.followers || [],
+                followings: req.body.followings || [],
                 isAdmin: req.body.isAdmin || false
             };
             var error = User_1.validateUser(new_user).error;

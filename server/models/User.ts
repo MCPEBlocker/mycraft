@@ -1,16 +1,14 @@
 import mongoose = require('mongoose');
 import Joi = require('joi');
 
-export const User = mongoose.model('User',new mongoose.Schema({
+export const userSchema = new mongoose.Schema({
     username : {
-        unique: true,
         type: String,
         required: true,
         min: 5,
         max: 50
     },
     email: {
-        unique:true,
         type: String,
         required: true
     },
@@ -32,7 +30,9 @@ export const User = mongoose.model('User',new mongoose.Schema({
         type: Boolean,
         default: false
     }
-}));
+});
+
+export const User = mongoose.model('User',userSchema);
 
 export const validateUser: Function = (user: any) => {
     const schema = Joi.object({
@@ -45,3 +45,12 @@ export const validateUser: Function = (user: any) => {
     });
     return schema.validate(user);
 };
+
+export interface UserType extends mongoose.Document {
+    username: string,
+    email: string,
+    password: string,
+    isAdmin: boolean,
+    followers: any,
+    followings: any,
+}

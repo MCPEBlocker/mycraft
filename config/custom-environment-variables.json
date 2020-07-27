@@ -1,3 +1,4 @@
 {
-    "jwtSecretKey":"jwtPrivateKey"
+    "jwtSecretKey":"jwtPrivateKey",
+    "mongodbURI":"mongoURI"
 }

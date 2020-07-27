@@ -1,20 +1,11 @@
 import express from 'express';
-const router: express.IRouter = express.Router();
-import { User, validateUser } from '../models/User';
+const router: express.Router = express.Router();
+import { User, validateUser, UserType } from '../models/User';
 import bcrypt from 'bcrypt';
 import authMiddleware from '../middlewares/request';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import config from 'config';
-
-interface UserType extends mongoose.Document {
-    username: string,
-    email: string,
-    password: string,
-    isAdmin: boolean,
-    followers: any,
-    followings: any,
-}
 
 router.use(express.json());
 router.use(express.urlencoded({extended:false}));
@@ -67,8 +58,8 @@ router.post('/',(req: express.Request,res: express.Response)=>{
                 email: req.body.email,
                 username: req.body.username,
                 password: req.body.password,
-                followers: [],
-                followings: [],
+                followers: req.body.followers || [],
+                followings: req.body.followings || [],
                 isAdmin: req.body.isAdmin || false
             };
             const { error } = validateUser(new_user);

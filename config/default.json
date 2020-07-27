@@ -1,3 +1,5 @@
 {
-    "jwtSecretKey":""
+    "port":8080,
+    "jwtSecretKey":"",
+    "mongodbURI":""
 }

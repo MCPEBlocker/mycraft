@@ -1,18 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateUser = exports.User = void 0;
+exports.validateUser = exports.User = exports.userSchema = void 0;
 var mongoose = require("mongoose");
 var Joi = require("joi");
-exports.User = mongoose.model('User', new mongoose.Schema({
+exports.userSchema = new mongoose.Schema({
     username: {
-        unique: true,
         type: String,
         required: true,
         min: 5,
         max: 50
     },
     email: {
-        unique: true,
         type: String,
         required: true
     },
@@ -34,7 +32,8 @@ exports.User = mongoose.model('User', new mongoose.Schema({
         type: Boolean,
         default: false
     }
-}));
+});
+exports.User = mongoose.model('User', exports.userSchema);
 exports.validateUser = function (user) {
     var schema = Joi.object({
         email: Joi.string().required(),

@@ -1,10 +1,12 @@
 require('dotenv').config();
 import express = require("express");
 const app: express.Application = express();
-const config: any = require("./config.json")
-import mongoose = require('mongoose');
-import winston = require('winston');
+import config from 'config';
+import mongoose from 'mongoose';
+import winston from 'winston';
 import authRoute from './routes/auth';
+import photoRoute from './routes/photo';
+import craftingRoute from './routes/crafting';
 const logger: winston.Logger = winston.createLogger({
     transports: [
         new winston.transports.Console(),
@@ -12,7 +14,7 @@ const logger: winston.Logger = winston.createLogger({
     ]
 });
 
-const mongodbURI: any = process.env.mongodbURI;
+const mongodbURI: any = config.get("mongodbURI");
 
 mongoose.connect(mongodbURI,{
     useCreateIndex:true,
@@ -25,11 +27,13 @@ mongoose.connect(mongodbURI,{
 });
 
 app.use('/api/auth',authRoute);
+app.use('/api/photo',photoRoute);
+app.use('/api/crafting',craftingRoute);
 
 app.get("/", (req: any, res: any) => {
     res.send("/ main page");
 })
 
-app.listen(config.port, () => {
-    logger.info(`Up and running on https://localhost:${config.port}`);
+app.listen(config.get("port"), () => {
+    logger.info(`Up and running on https://localhost:${config.get("port")}`);
 })
