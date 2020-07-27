@@ -32,8 +32,8 @@ app.use('/api/crafting',craftingRoute);
 
 app.get("/", (req: any, res: any) => {
     res.send("/ main page");
-})
+});
 
-app.listen(config.get("port"), () => {
+app.listen(process.env.PORT || config.get("port"), () => {
     logger.info(`Up and running on https://localhost:${config.get("port")}`);
 })

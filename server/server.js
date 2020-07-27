@@ -34,6 +34,6 @@ app.use('/api/crafting', crafting_1.default);
 app.get("/", function (req, res) {
     res.send("/ main page");
 });
-app.listen(config_1.default.get("port"), function () {
+app.listen(process.env.PORT || config_1.default.get("port"), function () {
     logger.info("Up and running on https://localhost:" + config_1.default.get("port"));
 });
