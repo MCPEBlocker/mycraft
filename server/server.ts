@@ -30,10 +30,11 @@ app.use('/api/auth',authRoute);
 app.use('/api/photo',photoRoute);
 app.use('/api/crafting',craftingRoute);
 
-app.get("/", (req: any, res: any) => {
-    res.send("/ main page");
+app.get("/", (req: express.Request, res: express.Response) => {
+    res.setHeader("Content-Type","text/html");
+    res.send("/ - main page<br /> /api/auth - users api<br /> /api/photo - api which working with photos<br /> /api/crafting - crafting api<br /> these are for now :)");
 });
 
 app.listen(process.env.PORT || config.get("port"), () => {
-    logger.info(`Up and running on https://localhost:${config.get("port")}`);
+    logger.info(`Up and running on https://localhost:${process.env.PORT || config.get("port")}`);
 })

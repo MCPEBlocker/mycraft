@@ -32,8 +32,9 @@ app.use('/api/auth', auth_1.default);
 app.use('/api/photo', photo_1.default);
 app.use('/api/crafting', crafting_1.default);
 app.get("/", function (req, res) {
-    res.send("/ main page");
+    res.setHeader("Content-Type", "text/html");
+    res.send("/ - main page<br /> /api/auth - users api<br /> /api/photo - api which working with photos<br /> /api/crafting - crafting api<br /> these are for now :)");
 });
 app.listen(process.env.PORT || config_1.default.get("port"), function () {
-    logger.info("Up and running on https://localhost:" + config_1.default.get("port"));
+    logger.info("Up and running on https://localhost:" + (process.env.PORT || config_1.default.get("port")));
 });
