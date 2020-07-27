@@ -22,6 +22,9 @@ module.exports = function (req, res, next) {
                 if (!result)
                     return res.status(404).send("Cannot find user with " + authUser_1.username + " username!");
                 if (result.isAdmin == true) {
+                    res.setHeader("Access-Control-Allow-Origin", "*");
+                    res.setHeader("Access-Control-Allow-Methods", "*");
+                    res.setHeader("Access-Control-Allow-Headers", "*");
                     next();
                 }
                 else {

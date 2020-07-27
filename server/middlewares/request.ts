@@ -29,6 +29,9 @@ export = (req: express.Request,res: express.Response,next: express.NextFunction)
                 if(!result)
                     return res.status(404).send(`Cannot find user with ${authUser.username} username!`);
                 if(result.isAdmin == true){
+                    res.setHeader("Access-Control-Allow-Origin","*");
+                    res.setHeader("Access-Control-Allow-Methods","*");
+                    res.setHeader("Access-Control-Allow-Headers","*");
                     next();
                 } else {
                     return res.status(403).send(`You cannot get this data!`);
