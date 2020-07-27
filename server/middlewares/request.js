@@ -12,6 +12,9 @@ module.exports = function (req, res, next) {
     }
     else {
         try {
+            var jwtKey = config_1.default.get("jwtSecretKey");
+            if (!jwtKey)
+                return res.status(500).send("jwt secret key not found!");
             var authUser_1 = jsonwebtoken_1.default.verify(token, config_1.default.get("jwtSecretKey"));
             User_1.User.findById(authUser_1.id, function (err, result) {
                 if (err)
@@ -27,7 +30,7 @@ module.exports = function (req, res, next) {
             });
         }
         catch (ex) {
-            return res.status(400).send(ex);
+            return res.status(400).send(ex.message);
         }
     }
 };

@@ -1,7 +1,6 @@
 import { User } from '../models/User';
 import express from 'express';
 import { Document } from 'mongoose';
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import config from 'config';
 
@@ -20,6 +19,9 @@ export = (req: express.Request,res: express.Response,next: express.NextFunction)
         return res.status(400).send(`x-api-token header is required!`);
     } else {
         try {
+            const jwtKey = config.get("jwtSecretKey");
+            if(!jwtKey)
+                return res.status(500).send(`jwt secret key not found!`);
             const authUser: any = jwt.verify(token, config.get("jwtSecretKey"));
             User.findById(authUser.id,(err: any, result: UserType | null) => {
                 if(err)
@@ -33,7 +35,7 @@ export = (req: express.Request,res: express.Response,next: express.NextFunction)
                 }
             });
         } catch(ex) {
-            return res.status(400).send(ex);
+            return res.status(400).send(ex.message);
         }
     }
 }
