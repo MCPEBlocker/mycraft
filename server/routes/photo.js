@@ -50,10 +50,10 @@ var storage = new multer_gridfs_storage_1.default({
     }
 });
 var upload = multer_1.default({ storage: storage });
-router.use(request_1.default);
+// router.use(authMiddleware);
 router.use(express_1.default.urlencoded({ extended: false }));
 router.use(express_1.default.json());
-router.get('/all', function (req, res) {
+router.get('/all', request_1.default, function (req, res) {
     Photo_1.Photo.find(function (err, result) {
         if (err) {
             logger.warn(err.message, { date: Date.now });
@@ -75,7 +75,7 @@ router.get('/all', function (req, res) {
             });
         }
     });
-});
+}).stack;
 router.get('/:filename', function (req, res) {
     Photo_1.Photo.findOne({ filename: req.params.filename }, function (err, result) {
         if (err) {
@@ -101,7 +101,7 @@ router.get('/:filename', function (req, res) {
         });
     });
 });
-router.post("/", upload.single("photo"), function (req, res) {
+router.post("/", request_1.default, upload.single("photo"), function (req, res) {
     if (!req.file)
         return res.status(400).send("File is required!");
     if (req.file.mimetype !== 'image/jpeg' && req.file.mimetype !== 'image/png' && req.file.mimetype !== 'image/svg+xml')
@@ -130,7 +130,7 @@ router.post("/", upload.single("photo"), function (req, res) {
         });
     });
 });
-router.delete('/:filename', function (req, res) {
+router.delete('/:filename', request_1.default, function (req, res) {
     Photo_1.Photo.findOne({ filename: req.params.filename }, function (err, result) {
         if (err) {
             logger.warn(err.message, { date: Date.now });
