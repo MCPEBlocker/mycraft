@@ -51,11 +51,11 @@ const storage = new GridFsStorage({
 });
 const upload = multer({ storage });
 
-router.use(authMiddleware);
+// router.use(authMiddleware);
 router.use(express.urlencoded({extended:false}));
 router.use(express.json());
 
-router.get('/all',(req: express.Request, res: express.Response) => {
+router.get('/all', authMiddleware, (req: express.Request, res: express.Response) => {
     Photo.find((err: any, result: any) => {
         if(err) {
             logger.warn(err.message, {date: Date.now});
@@ -76,7 +76,7 @@ router.get('/all',(req: express.Request, res: express.Response) => {
             });
         }
     });
-});
+}).stack;
 
 router.get('/:filename',(req: express.Request, res: express.Response) => {
     Photo.findOne({ filename: req.params.filename },(err: any, result: PhotoType | null) => {
@@ -104,7 +104,7 @@ router.get('/:filename',(req: express.Request, res: express.Response) => {
     });
 });
 
-router.post("/", upload.single("photo"), (req: express.Request, res: express.Response) => {
+router.post("/", authMiddleware, upload.single("photo"), (req: express.Request, res: express.Response) => {
     if(!req.file)
         return res.status(400).send(`File is required!`);
     if(req.file.mimetype !== 'image/jpeg' && req.file.mimetype !== 'image/png' && req.file.mimetype !== 'image/svg+xml')
@@ -134,7 +134,7 @@ router.post("/", upload.single("photo"), (req: express.Request, res: express.Res
     });
 });
 
-router.delete('/:filename',(req: express.Request,res: express.Response) => {
+router.delete('/:filename', authMiddleware, (req: express.Request,res: express.Response) => {
     Photo.findOne({ filename: req.params.filename },(err: any, result: PhotoType | null) => {
         if(err) {
             logger.warn(err.message, {date: Date.now});
