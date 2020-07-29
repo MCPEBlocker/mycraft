@@ -7,9 +7,6 @@ exports.PhotoSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    caption: {
-        type: String
-    },
     date: {
         type: Date,
         default: Date.now

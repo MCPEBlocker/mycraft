@@ -9,33 +9,46 @@ var bcrypt_1 = __importDefault(require("bcrypt"));
 var request_1 = __importDefault(require("../middlewares/request"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var config_1 = __importDefault(require("config"));
+var winston_1 = __importDefault(require("winston"));
+var logger = winston_1.default.createLogger({
+    transports: [
+        new winston_1.default.transports.File({ filename: './logs/auth.log' })
+    ]
+});
 router.use(express_1.default.json());
 router.use(express_1.default.urlencoded({ extended: false }));
 router.use(request_1.default);
 router.get('/', function (req, res) {
     User_1.User.find(function (err, result) {
-        if (err)
+        if (err) {
+            logger.warn(err.message, { date: Date.now });
             return res.status(400).send(err.message);
+        }
         res.send(result);
     });
 });
 router.get('/getToken/:username', function (req, res) {
     User_1.User.findOne({ username: req.params.username }, function (err, result) {
-        if (err)
+        if (err) {
+            logger.warn(err.message, { date: Date.now });
             return res.status(400).send(err.message);
+        }
         if (!result)
             return res.status(404).send("Cannot find user with \"" + req.params.username + "\" username!");
         var authToken = jsonwebtoken_1.default.sign({
             id: result._id,
             username: result.username
         }, config_1.default.get("jwtSecretKey"));
+        logger.info("Token generated!", { token: authToken });
         res.send(authToken);
     });
 });
 router.get('/:username', function (req, res) {
     User_1.User.findOne({ username: req.params.username }, function (err, result) {
-        if (err)
+        if (err) {
+            logger.warn(err.message, { date: Date.now });
             return res.status(400).send(err.message);
+        }
         if (!result)
             return res.status(404).send("Cannot find user with \"" + req.params.username + "\" username!");
         res.send(result);
@@ -43,13 +56,17 @@ router.get('/:username', function (req, res) {
 });
 router.post('/', function (req, res) {
     User_1.User.findOne({ email: req.body.email }, function (err, result) {
-        if (err)
+        if (err) {
+            logger.warn(err.message, { date: Date.now });
             return res.status(400).send(err.message);
+        }
         if (result)
             return res.status(400).send('Mail is already registered!');
         User_1.User.findOne({ username: req.body.username }, function (err, obj) {
-            if (err)
+            if (err) {
+                logger.warn(err.message, { date: Date.now });
                 return res.status(400).send(err.message);
+            }
             if (obj)
                 return res.status(400).send('Username is already taken!');
             var new_user = {
@@ -64,16 +81,23 @@ router.post('/', function (req, res) {
             if (error)
                 return res.status(500).send(error.details[0].message);
             bcrypt_1.default.genSalt(function (err, salt) {
-                if (err)
+                if (err) {
+                    logger.warn(err.message, { date: Date.now });
                     return res.status(500).send(err.message);
+                }
                 bcrypt_1.default.hash(req.body.password, salt, function (err, password) {
-                    if (err)
+                    if (err) {
+                        logger.warn(err.message, { date: Date.now });
                         return res.status(500).send(err.message);
+                    }
                     new_user.password = password;
                     var user = new User_1.User(new_user);
                     user.save(function (err, product) {
-                        if (err)
+                        if (err) {
+                            logger.warn(err.message, { date: Date.now });
                             return res.status(400).send(err.message);
+                        }
+                        logger.info("New user registered!", { user: product });
                         res.status(201).send(product);
                     });
                 });
@@ -83,8 +107,10 @@ router.post('/', function (req, res) {
 });
 router.put('/:username', function (req, res) {
     User_1.User.findOne({ username: req.params.username }, function (err, result) {
-        if (err)
+        if (err) {
+            logger.warn(err.message, { date: Date.now });
             return res.status(400).send(err.message);
+        }
         if (!result)
             return res.status(404).send("Cannot find that user!");
         var edited_user = {
@@ -99,8 +125,10 @@ router.put('/:username', function (req, res) {
         if (error)
             return res.status(400).send(error.details[0].message);
         bcrypt_1.default.hash(edited_user.password, 10, function (err, password) {
-            if (err)
+            if (err) {
+                logger.warn(err.message, { date: Date.now });
                 return res.status(500).send(err.message);
+            }
             edited_user.password = password;
             result.username = edited_user.username;
             result.password = edited_user.password;
@@ -109,8 +137,11 @@ router.put('/:username', function (req, res) {
             result.followings = edited_user.followings;
             result.isAdmin = edited_user.isAdmin;
             result.save(function (err, product) {
-                if (err)
+                if (err) {
+                    logger.warn(err.message, { date: Date.now });
                     return res.status(400).send(err.message);
+                }
+                logger.info("User is edited!", { user: product });
                 res.send(product);
             });
         });
@@ -118,8 +149,11 @@ router.put('/:username', function (req, res) {
 });
 router.delete('/:username', function (req, res) {
     User_1.User.findOneAndRemove({ username: req.params.username }, function (err, result) {
-        if (err)
+        if (err) {
+            logger.warn(err.message, { date: Date.now });
             return res.status(400).send(err.message);
+        }
+        logger.info("User is deleted!", { user: result });
         res.send(result);
     });
 });

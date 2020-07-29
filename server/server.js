@@ -27,6 +27,7 @@ mongoose_1.default.connect(mongodbURI, {
 }, function (err) {
     if (err)
         return logger.error('Cannot connect to the mongodb cloud!');
+    logger.info("Connected to the mongodb cloud!");
 });
 app.use('/api/auth', auth_1.default);
 app.use('/api/photo', photo_1.default);

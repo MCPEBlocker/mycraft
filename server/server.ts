@@ -24,6 +24,7 @@ mongoose.connect(mongodbURI,{
 },(err:any) => {
     if(err)
         return logger.error('Cannot connect to the mongodb cloud!');
+    logger.info(`Connected to the mongodb cloud!`);
 });
 
 app.use('/api/auth',authRoute);

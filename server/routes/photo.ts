@@ -4,11 +4,17 @@ import config from 'config';
 import multer from 'multer';
 import GridFsStorage from 'multer-gridfs-storage';
 import authMiddleware from '../middlewares/request';
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 import crypto from 'crypto';
 import path from 'path';
 import { Photo, PhotoType } from '../models/Photo';
 import { User, UserType } from '../models/User';
+import winston from 'winston';
+const logger: winston.Logger = winston.createLogger({
+    transports: [
+        new winston.transports.File({filename: './logs/photo.log'})
+    ]
+});
 
 const connection: mongoose.Connection = mongoose.createConnection(config.get("mongodbURI"), {
     useNewUrlParser: true,
@@ -29,6 +35,7 @@ const storage = new GridFsStorage({
         return new Promise((resolve: any, reject: any) => {
             crypto.randomBytes(16, (err: any, buf: Buffer) => {
                 if(err) {
+                    logger.warn(err.message, {date: Date.now});
                     return reject(err);
                 }
                 const filename = buf.toString('hex') + path.extname(file.originalname);
@@ -50,14 +57,18 @@ router.use(express.json());
 
 router.get('/all',(req: express.Request, res: express.Response) => {
     Photo.find((err: any, result: any) => {
-        if(err)
+        if(err) {
+            logger.warn(err.message, {date: Date.now});
             return res.status(400).send(err.message);
+        }
         if(!result[0] || result.length === 0){
-            res.status(404).send(`Cannot find any image!`);
+            return res.status(404).send(`Cannot find any image!`);
         } else {
             gfs.find().toArray((err: any, files: any) => {
-                if(err)
-                    res.status(400).send(err.message);
+                if(err) {
+                    logger.warn(err.message, {date: Date.now});
+                    return res.status(400).send(err.message);
+                }
                 if (!files || files.length === 0) {
                     return res.send('No photos found!');
                 }
@@ -69,22 +80,24 @@ router.get('/all',(req: express.Request, res: express.Response) => {
 
 router.get('/:filename',(req: express.Request, res: express.Response) => {
     Photo.findOne({ filename: req.params.filename },(err: any, result: PhotoType | null) => {
-        if(err)
+        if(err) {
+            logger.warn(err.message, {date: Date.now});
             return res.status(400).send(err.message);
+        }
         if(!result)
             return res.status(404).send(`Cannot find that photo!`);
         gfs.find({filename: result.filename}).toArray((err: any,files: any)=>{
-            if(err)
+            if(err) {
+                logger.warn(err.message, {date: Date.now});
                 return res.status(400).send(err.message);
+            }
             if(!files[0] || files.length === 0) {
                 return res.status(404).send(`No files available`);
             }
             if(files[0].contentType === 'image/jpeg' || files[0].contentType === 'image/png' || files[0].contentType === 'image/svg+xml') {
                 gfs.openDownloadStreamByName(result.filename).pipe(res);
             } else {
-                res.status(400).send({
-                    err: 'Not an image'
-                });
+                res.status(400).send('Not an image');
             }
         });
         
@@ -100,17 +113,22 @@ router.post("/", upload.single("photo"), (req: express.Request, res: express.Res
     if(!authUser)
         return res.status(400).send(`x-auth-username is required!`);
     User.findOne({ username: authUser },(err: any, result: UserType | null) => {
-        if(err)
-            res.status(400).send(err.message);
+        if(err) {
+            logger.warn(err.message, {date: Date.now});
+            return res.status(400).send(err.message);
+        }
         if(!result)
-            res.status(400).send(`Cannot find user with ${authUser} username`);
+            return res.status(400).send(`Cannot find user with ${authUser} username`);
         const photo = new Photo({
             filename: req.file.filename,
             from: result
         });
         photo.save((err: any, product: mongoose.Document) => {
-            if(err)
-                res.status(400).send(err.message);
+            if(err) {
+                logger.warn(err.message, {date: Date.now});
+                return res.status(400).send(err.message);
+            }
+            logger.info(`New photo uploaded`,{photo: product});
             res.status(201).send(product);
         });
     });
@@ -118,18 +136,25 @@ router.post("/", upload.single("photo"), (req: express.Request, res: express.Res
 
 router.delete('/:filename',(req: express.Request,res: express.Response) => {
     Photo.findOne({ filename: req.params.filename },(err: any, result: PhotoType | null) => {
-        if(err)
+        if(err) {
+            logger.warn(err.message, {date: Date.now});
             return res.status(400).send(err.message);
+        }
         if(!result)
             return res.status(404).send(`Cannot find that photo`);
         gfs.find({filename: result.filename}).toArray((err: any, files: any) => {
-            if(err)
+            if(err) {
+                logger.warn(err.message, {date: Date.now});
                 return res.status(400).send(err.message);
+            }
             if(!files[0] || files.length === 0)
                 return res.status(404).send(`Cannot find that photo!`);
             gfs.delete(new mongoose.Types.ObjectId(files[0]._id), (err: any,data: any) => {
-                if(err)
+                if(err) {
+                    logger.warn(err.message, {date: Date.now});
                     return res.status(400).send(err.message);
+                }
+                logger.info(`Photo deleted!`,{photo: data});
                 res.send(`Photo deleted!`);
             });
         });
