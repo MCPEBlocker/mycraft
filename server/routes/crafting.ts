@@ -2,7 +2,7 @@ import express from 'express';
 const router: express.Router = express.Router();
 import { Craft, validateCraft, CraftType } from '../models/Craft';
 import { User, UserType } from '../models/User';
-import mongoose, { QueryFindOneAndUpdateOptions } from 'mongoose';
+import mongoose from 'mongoose';
 import authMiddleware from "../middlewares/request";
 import winston from 'winston';
 const logger: winston.Logger = winston.createLogger({
